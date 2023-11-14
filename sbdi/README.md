@@ -15,7 +15,6 @@ biocache
 │   ├── download-readme.html -> /home/mats/src/biodiversitydata-se/biocache-service/sbdi/data/config/download-readme.html
 │   ├── facets.json -> /home/mats/src/biodiversitydata-se/biocache-service/sbdi/data/config/facets.json
 │   ├── groups.json -> /home/mats/src/biodiversitydata-se/biocache-service/sbdi/data/config/groups.json
-│   ├── log4j.xml -> /home/mats/src/biodiversitydata-se/biocache-service/sbdi/data/config/log4j.xml
 │   ├── pipelines-field-config.json -> /home/mats/src/biodiversitydata-se/biocache-service/sbdi/data/config/pipelines-field-config.json
 │   └── subgroups.json -> /home/mats/src/biodiversitydata-se/biocache-service/sbdi/data/config/subgroups.json
 ├── heatmap
