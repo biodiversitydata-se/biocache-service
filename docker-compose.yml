@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+
+  cassandra:
+    image: cassandra:3.11
+    environment:
+      MAX_HEAP_SIZE: 128M
+      HEAP_NEWSIZE: 24M
+    ports:
+      - 9042:9042
+    volumes:
+      - db_cassandra:/var/lib/cassandra
+
+  solr:
+    image: ghcr.io/biodiversitydata-se/biocache-solr:1.0.0
+    #image: sbdi/biocache-solr-dev
+    environment:
+      SOLR_HEAP: 4g
+      SOLR_OPTS: "-Dlog4j2.formatMsgNoLookups=true"
+    #build:
+    #  context: ../biocache-solr
+    ports:
+      - "8983:8983"
+    volumes:
+      - data_solr:/var/solr
+
+  biocache-service:
+    image: sbdi/biocache-service-dev
+    build:
+      context: .
+    ports:
+      - 8080:8080
+    volumes:
+      - ./sbdi/data/config/biocache-config.properties:/data/biocache/config/biocache-config.properties
+      - ./sbdi/data/config/logger-client.properties:/data/logger-client/config/logger-client.properties
+
+volumes:
+  db_cassandra:
+  data_solr:
