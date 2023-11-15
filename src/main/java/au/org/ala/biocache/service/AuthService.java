@@ -133,7 +133,8 @@ public class AuthService {
             try {
                 logger.debug("authCache requesting: " + jsonUri);
                 HttpHeaders requestHeaders = new HttpHeaders();
-                requestHeaders.set("Authorization", tokenService.getAuthToken(false).toAuthorizationHeader());
+                // SBDI: this craches since oidc is not enabled
+                //requestHeaders.set("Authorization", tokenService.getAuthToken(false).toAuthorizationHeader());
                 HttpEntity<Object> request = new HttpEntity<>(null, requestHeaders);
                 Map m = restTemplate.postForObject(jsonUri, request, Map.class);
                 if (m != null && m.size() > 0) {
@@ -151,7 +152,8 @@ public class AuthService {
             try {
                 logger.debug("authCache requesting: " + jsonUri);
                 HttpHeaders requestHeaders = new HttpHeaders();
-                requestHeaders.set("Authorization", tokenService.getAuthToken(false).toAuthorizationHeader());
+                // SBDI: this craches since oidc is not enabled
+                //requestHeaders.set("Authorization", tokenService.getAuthToken(false).toAuthorizationHeader());
                 HttpEntity<Object> request = new HttpEntity<>(null, requestHeaders);
                 Map m = restTemplate.postForObject(jsonUri, request, Map.class);
                 if (m != null && m.size() > 0) {
@@ -169,7 +171,8 @@ public class AuthService {
             try {
                 logger.debug("authCache requesting: " + jsonUri);
                 HttpHeaders requestHeaders = new HttpHeaders();
-                requestHeaders.set("Authorization", tokenService.getAuthToken(false).toAuthorizationHeader());
+                // SBDI: this craches since oidc is not enabled
+                //requestHeaders.set("Authorization", tokenService.getAuthToken(false).toAuthorizationHeader());
                 HttpEntity<Object> request = new HttpEntity<>(null, requestHeaders);
                 Map m = restTemplate.postForObject(jsonUri, request, Map.class);
                 if (m != null && m.size() > 0) {
