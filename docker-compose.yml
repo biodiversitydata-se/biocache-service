@@ -13,12 +13,13 @@ services:
       - db_cassandra:/var/lib/cassandra
 
   solr:
-    image: sbdi/biocache-solr-dev
+    image: ghcr.io/biodiversitydata-se/biocache-solr:1.0.0
+    #image: sbdi/biocache-solr-dev
     environment:
       SOLR_HEAP: 4g
       SOLR_OPTS: "-Dlog4j2.formatMsgNoLookups=true"
-    build:
-      context: ../biocache-solr
+    #build:
+    #  context: ../biocache-solr
     ports:
       - "8983:8983"
     volumes:
