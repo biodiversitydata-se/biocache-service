@@ -221,7 +221,8 @@ public class AuthService {
             final String jsonUri = userDetailsUrl + userDetailsPath + "?userName=" + userId;
             logger.info("authCache requesting: " + jsonUri);
             HttpHeaders requestHeaders = new HttpHeaders();
-            requestHeaders.set("Authorization", tokenService.getAuthToken(false).toAuthorizationHeader());
+            // SBDI: this craches since oidc is not enabled
+            //requestHeaders.set("Authorization", tokenService.getAuthToken(false).toAuthorizationHeader());
             HttpEntity<Object> request = new HttpEntity<>(null, requestHeaders);
             roles.addAll((List) restTemplate.postForObject(jsonUri, request, Map.class).getOrDefault("roles", Collections.EMPTY_LIST));
         }
@@ -235,7 +236,8 @@ public class AuthService {
             final String jsonUri = userDetailsUrl + userDetailsPath + "?userName=" + userId;
             logger.info("authCache requesting: " + jsonUri);
             HttpHeaders requestHeaders = new HttpHeaders();
-            requestHeaders.set("Authorization", tokenService.getAuthToken(false).toAuthorizationHeader());
+            // SBDI: this craches since oidc is not enabled
+            //requestHeaders.set("Authorization", tokenService.getAuthToken(false).toAuthorizationHeader());
             HttpEntity<Object> request = new HttpEntity<>(null, requestHeaders);
             userDetails = (Map) restTemplate.postForObject(jsonUri, request, Map.class);
         }
