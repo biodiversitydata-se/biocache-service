@@ -34,7 +34,7 @@ logger-client
 
 ## Usage
 
-Run locally:
+Run locally (on http://localhost:8081/ws):
 ```
 make run
 ```
