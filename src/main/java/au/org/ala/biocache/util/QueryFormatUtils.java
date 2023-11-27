@@ -81,7 +81,7 @@ public class QueryFormatUtils {
     protected Pattern termPattern = Pattern.compile("([a-zA-z_]+?):((\".*?\")|(\\\\ |[^: \\)\\(])+)"); // matches foo:bar, foo:"bar bash" & foo:bar\ bash
     protected Pattern indexFieldPatternMatcher = java.util.regex.Pattern.compile("<span.*?</span>|(\\b|-)[\\w*\\(]{1,}:");
     protected Pattern layersPattern = Pattern.compile("(^|\\b)(el|cl)[0-9abc]+:");
-    protected Pattern taxaPattern = Pattern.compile("(^|\\s|\"|\\(|\\[|')taxa:\"?([\\w\\s\\(\\)\\.:\\-_]*)\"?");
+    protected Pattern taxaPattern = Pattern.compile("(^|\\s|\"|\\(|\\[|')taxa:\"?([([a-zA-Z]|[à-ü]|[À-Ü])\\s\\(\\)\\.:\\-_]*)\"?");
 
     private int maxBooleanClauses = 1024;
 
