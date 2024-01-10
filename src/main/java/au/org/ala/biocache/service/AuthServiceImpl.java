@@ -88,7 +88,8 @@ public class AuthServiceImpl implements AuthService {
                 final String jsonUri = userDetailsUrl + "getUserDetails?userName=" + emailOrId;
                 logger.info("authCache requesting: " + jsonUri);
                 HttpHeaders requestHeaders = new HttpHeaders();
-                requestHeaders.set("Authorization", tokenService.getAuthToken(false).toAuthorizationHeader());
+                // SBDI: this crashes since oidc is not enabled
+                //requestHeaders.set("Authorization", tokenService.getAuthToken(false).toAuthorizationHeader());
                 HttpEntity<Object> request = new HttpEntity<>(null, requestHeaders);
                 userDetails = (Map) restTemplate.postForObject(jsonUri, request, Map.class);
             } catch (Exception ignored) {
