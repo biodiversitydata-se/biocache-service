@@ -121,7 +121,7 @@ public class AuthServiceImpl implements AuthService {
             try {
                 new InternetAddress(downloadRequestDTO.getEmail()).validate();
                 // verify the email address is registered
-                return lookupAuthUser(downloadRequestDTO.getEmail());
+                return lookupAuthUser(downloadRequestDTO.getEmail(), false);
             } catch (AddressException e) {
                 // invalid email
                 logger.info("Email only download request failed - invalid email " + downloadRequestDTO.getEmail());
@@ -158,13 +158,13 @@ public class AuthServiceImpl implements AuthService {
      * @return
      */
     @Cacheable("lookupAuthUser")
-    public Optional<AlaUserProfile> lookupAuthUser(String userIdOrEmail) {
+    public Optional<AlaUserProfile> lookupAuthUser(String userIdOrEmail, boolean getRoles) {
         Map<String, Object> userDetails = (Map<String, Object>) getUserByEmailOrId(userIdOrEmail);
         if (userDetails == null || userDetails.isEmpty()) {
             return Optional.empty();
         }
 
-        String userId = (String) userDetails.getOrDefault("userId", null);
+        String userId = (String) userDetails.getOrDefault("userid", (String) userDetails.getOrDefault("userId", null));
         boolean activated = (Boolean) userDetails.getOrDefault("activated", false);
         boolean locked = (Boolean) userDetails.getOrDefault("locked", true);
         String firstName = (String) userDetails.getOrDefault("firstName", "");
@@ -172,7 +172,9 @@ public class AuthServiceImpl implements AuthService {
         String email = (String) userDetails.getOrDefault("email", "");
 
         Set<String> userRoles = new HashSet<>(Collections.emptySet());
-        userRoles.addAll((List) userDetails.getOrDefault("roles", Collections.EMPTY_LIST));
+        if (getRoles) {
+            userRoles.addAll((List) userDetails.getOrDefault("roles", Collections.EMPTY_LIST));
+            }
 
         if (email != null && activated && !locked) {
             return Optional.of(
