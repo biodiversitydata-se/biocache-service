@@ -1,5 +1,10 @@
 version: '3.8'
 
+# Enable when ingesting data with pipelines
+#networks:
+#  local:
+#    external: true
+
 services:
 
   cassandra:
@@ -20,8 +25,10 @@ services:
       SOLR_OPTS: "-Dlog4j2.formatMsgNoLookups=true"
       SOLR_PORT: "8983"
       SOLR_HOST: "localhost"
+      #SOLR_HOST: "solr"
       ZOO_PORT: "9983"
       ZOO_HOST: "localhost"
+      #ZOO_HOST: "solr"
     #build:
     #  context: ../biocache-solr
     ports:
@@ -29,6 +36,9 @@ services:
       - "9983:9983"
     volumes:
       - data_solr:/var/solr
+    # Enable when ingesting data with pipelines
+    #networks:
+    #  - local
 
   biocache-service:
     image: sbdi/biocache-service-dev
