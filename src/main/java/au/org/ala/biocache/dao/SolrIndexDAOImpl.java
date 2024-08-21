@@ -8,11 +8,9 @@ import au.org.ala.biocache.service.RestartDataService;
 import au.org.ala.biocache.stream.ProcessInterface;
 import au.org.ala.biocache.util.DwCTerms;
 import au.org.ala.biocache.util.DwcTermDetails;
-import au.org.ala.biocache.util.QueryFormatUtils;
 import au.org.ala.biocache.util.solr.FieldMappedSolrClient;
 import au.org.ala.biocache.util.solr.FieldMappingUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.client.config.RequestConfig;
@@ -117,9 +115,6 @@ public class SolrIndexDAOImpl implements IndexDAO {
     protected String indexFieldsToHide;
 
     protected Pattern layersPattern = Pattern.compile("(el|cl)[0-9abc]+");
-
-    @Inject
-    protected QueryFormatUtils queryFormatUtils;
 
     @Value("${dwc.url:http://rs.tdwg.org/dwc/terms/}")
     protected String dwcUrl = "http://rs.tdwg.org/dwc/terms/";
@@ -1180,17 +1175,39 @@ public class SolrIndexDAOImpl implements IndexDAO {
                 }
             }
         }
-        String[] fl = new String[]{"id"};
+
         if (StringUtils.isNotEmpty(query.getFields())) {
             solrParams.set("fl", StringUtils.join(fieldMappingUtil.translateFieldArray(query.getFields().split(",")), ","));
         } else {
             solrParams.set("fl", "id");
         }
 
-        if (StringUtils.isEmpty(query.getSortField()) || !ArrayUtils.contains(fl, query.getSortField().split(" ")[0])) {
-            solrParams.set("sort", solrParams.get("fl").split(",")[0] + " asc");
+        // The sort field is required, sometimes. Testing suggests that this depends on the solrClient class.
+        // 1. use the query specified sort, without checking if it is in the list of fields
+        // 2. use the first non-multivalue field
+        // 3. use "id asc" and append "id" to the fl if it is missing
+        //
+        // Handle the error for some solrClient classes when the default query sort is "score asc" by excluding it
+        if (StringUtils.isNotEmpty(query.getSortField()) && !"score asc".equals(query.getSortField())) {
+            solrParams.set("sort", query.getSortField());
         } else {
-            solrParams.set("sort", "index asc");
+            String [] fl = solrParams.get("fl").split(",");
+            String nonMultivalueField = null;
+            for (String field : fl) {
+                IndexFieldDTO f = indexFieldMap.get(field);
+                if (f != null && !f.isMultivalue()) {
+                    nonMultivalueField = f.getName();
+                    break;
+                }
+            }
+            if (nonMultivalueField != null) {
+                solrParams.set("sort", nonMultivalueField + " asc");
+            } else {
+                solrParams.set("sort", "id asc");
+
+                // append "id" to field list
+                solrParams.set("fl", solrParams.get("fl") + ",id");
+            }
         }
 
         String qt = "/export";
