@@ -1,9 +1,7 @@
-version: '3.8'
-
-# Enable when ingesting data with pipelines
-#networks:
-#  local:
-#    external: true
+# For ingesting data with pipelines
+networks:
+  local:
+    external: true
 
 services:
 
