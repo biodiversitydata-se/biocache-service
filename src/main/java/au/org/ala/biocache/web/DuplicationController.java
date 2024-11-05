@@ -77,7 +77,7 @@ public class DuplicationController {
 
             SolrDocumentList sdl = searchDuplicates(ID, guid);
             if (sdl.isEmpty()) {
-                return null;
+                return new DuplicateRecordDetails();
             }
 
             SolrDocument sd = sdl.get(0);
@@ -97,7 +97,7 @@ public class DuplicationController {
                 return getDuplicateStatsForGuid(drd.getDuplicateOf());
             } else {
                 // not a duplicate
-                return null;
+                return new DuplicateRecordDetails();
             }
 
             return drd;
