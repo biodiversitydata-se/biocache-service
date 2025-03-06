@@ -22,7 +22,7 @@ COPY sbdi/data/config/*.html /data/biocache/config/
 COPY build/libs/biocache-service-*.war $CATALINA_HOME/webapps/ws.war
 COPY sbdi/data/biocache-download.xml /usr/local/tomcat/conf/Catalina/localhost/biocache-download.xml
 
-ENV DOCKERIZE_VERSION v0.7.0
+ENV DOCKERIZE_VERSION=v0.9.2
 
 RUN apt-get update \
     && apt-get install -y wget \
