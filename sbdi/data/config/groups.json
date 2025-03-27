@@ -74,46 +74,60 @@
     "excluded": []
   },
   {
-    "name": "Bryophytes",
-    "rank": "phylum",
-    "included": ["Bryophyta", "Marchantiophyta", "Anthocerotophyta"],
-    "excluded": [],
-    "parent": "Plants"
-  },
-  {
-    "name": "Gymnosperms",
-    "rank": "subclass",
-    "included": ["Pinidae", "Cycadidae"],
-    "excluded": [],
-    "parent": "Plants"
-  },
-  {
-    "name": "FernsAndAllies",
-    "rank": "subclass",
-    "included": ["Equisetidae", "Lycopodiidae", "Marattiidae", "Ophioglossidae", "Polypodiidae", "Psilotidae"],
-    "excluded": [],
-    "parent": "Plants"
-  },
-  {
-    "name": "Angiosperms",
-    "rank": "subclass",
-    "included": ["Magnoliidae"],
-    "excluded": [],
-    "parent": "Plants"
-  },
-  {
     "name": "Monocots",
-    "rank": "superorder",
-    "included": ["Lilianae"],
+    "rank": "class",
+    "included": ["Liliopsida"],
     "excluded": [],
-    "parent": "Angiosperms"
+    "parent": "Plants"
   },
   {
     "name": "Dicots",
-    "rank": "subclass",
-    "included": ["Magnoliidae"],
-    "excluded": ["Lilianae"],
-    "parent": "Angiosperms"
+    "rank": "class",
+    "included": ["Magnoliopsida"],
+    "excluded": [],
+    "parent": "Plants"
+  },
+  {
+    "name": "Lycophytes",
+    "rank": "class",
+    "included": ["Lycopodiopsida"],
+    "excluded": [],
+    "parent": "Plants"
+  },
+  {
+    "name": "Ferns",
+    "rank": "class",
+    "included": ["Polypodiopsida"],
+    "excluded": [],
+    "parent": "Plants"
+  },
+  {
+    "name": "Conifers",
+    "rank": "class",
+    "included": ["Pinopsida"],
+    "excluded": [],
+    "parent": "Plants"
+  },
+  {
+    "name": "Cycads",
+    "rank": "class",
+    "included": ["Cycadopsida"],
+    "excluded": [],
+    "parent": "Plants"
+  },
+  {
+    "name": "Ginkgo",
+    "rank": "class",
+    "included": ["Ginkgoopsida"],
+    "excluded": [],
+    "parent": "Plants"
+  },
+  {
+    "name": "GnetumPlants",
+    "rank": "class",
+    "included": ["Gnetopsida"],
+    "excluded": [],
+    "parent": "Plants"
   },
   {
     "name": "Fungi",
