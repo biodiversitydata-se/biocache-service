@@ -1,4 +1,4 @@
-FROM tomcat:9.0-jdk11-temurin
+FROM tomcat:9.0-jdk17-temurin
 
 ENV TZ=Europe/Stockholm
 
