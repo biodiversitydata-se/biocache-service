@@ -171,14 +171,16 @@ public class QueryFormatUtils {
                         // add to activeFacetMap fqs that are not inserted by a qid, and the q of qids in fqs.
                         // do not add spatial fields
                         if (originalFqs != null && originalFqs.length > i && !formatted[1].contains(spatialField + ":")) {
-                            Facet facet = new Facet();
-                            facet.setDisplayName(isIncludeUnfilteredFacetValues ? formattedOriginal[0] : formatted[0]);
                             String[] fv = fqOriginal.split(":");
                             if (fv.length >= 2) {
+                                Facet facet = new Facet();
                                 facet.setName(fv[0]);
+                                facet.setDisplayName(isIncludeUnfilteredFacetValues ? formattedOriginal[0] : formatted[0]);
                                 facet.setValue(fqOriginal.substring(fv[0].length() + 1));
+                                activeFacetMap.put(facet.getName(), facet);
+                            } else {
+                                logger.error("Unable to parse facet name from fq, ignoring: " + fq);
                             }
-                            activeFacetMap.put(facet.getName(), facet);
 
                             // activeFacetMap is based on the assumption that each fq is on different filter so its a [StringKey: Facet] structure
                             // but actually different fqs can use same filter key for example &fq=-month:'11'&fq=-month='12' so we added a new map
@@ -979,7 +981,7 @@ public class QueryFormatUtils {
 
         // Queries containing OR, AND or Intersects( must already be correctly escaped for SOLR
         // Note: if escaping is required, extract expressions from nested () [] "" for escaping with formatString.
-        if (isQuery && text.contains(" OR ") || text.contains(" AND ") || text.contains("Intersects(")) return text;
+        if (isQuery && (text.contains(" OR ") || text.contains(" AND ") || text.contains("Intersects("))) return text;
 
         try {
             String formatted = "";
@@ -1036,12 +1038,13 @@ public class QueryFormatUtils {
                             extractedValue = extractedValue.substring(0, extractedValue.indexOf(" OR "));
                         }
 
-                        // search for term in the extractedValue and clip
-                        // NOTE: the if the quoted term value contains content that looks like a term "name" then it will be
-                        //       treated as a new term.
-                        Matcher termMatcher = termPattern.matcher(extractedValue);
-                        if (termMatcher.find()) {
-                            extractedValue = extractedValue.substring(0, termMatcher.start());
+                        // search for term in the extractedValue and clip, this will be after the second unescaped ".
+                        // Note that it already confirmed that the first character is an unescaped double quote.
+                        for (int i = 1; i < extractedValue.length(); i++) {
+                            if (extractedValue.charAt(i) == '"' && extractedValue.charAt(i - 1) != '\\') {
+                                extractedValue = extractedValue.substring(0, i);
+                                break;
+                            }
                         }
 
                         // below code fragment extracts the filter value and try to format for solr query or get display value
