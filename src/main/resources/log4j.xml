@@ -1,5 +1,15 @@
 <!DOCTYPE log4j:configuration  SYSTEM "log4j.dtd">
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="true">
+    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+        <param name="Threshold" value="WARN"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %-5p: [%c{1}] - %m%n"/>
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelMatchFilter">
+            <param name="LevelToMatch" value="REMOTE#org.ala.client.appender.RestLevel" />
+            <param name="AcceptOnMatch" value="false"/>
+        </filter>
+    </appender>
     <appender name="FILE" class="org.apache.log4j.RollingFileAppender">
         <param name="File" value="/data/biocache/logs/biocache-service.log"/>
         <param name="Append" value="true"/>
@@ -90,6 +100,7 @@
     </category>
     <root>
         <priority value="WARN"/>
-         <appender-ref ref="FILE"/>
+        <appender-ref ref="CONSOLE"/>
+         <!-- <appender-ref ref="FILE"/> -->
     </root>
 </log4j:configuration>
