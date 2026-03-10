@@ -3,6 +3,7 @@ package au.org.ala.biocache.dao;
 import au.org.ala.biocache.dto.AssertionStatus;
 import au.org.ala.biocache.dto.IndexFieldDTO;
 import au.org.ala.biocache.dto.OccurrenceIndex;
+import au.org.ala.biocache.dto.SensitiveFields;
 import au.org.ala.biocache.service.LayersService;
 import au.org.ala.biocache.service.RestartDataService;
 import au.org.ala.biocache.stream.ProcessInterface;
@@ -435,7 +436,7 @@ public class SolrIndexDAOImpl implements IndexDAO {
 
         NamedList response = qr.getResponse();
 
-        NamedList<NamedList<Object>> fields = (NamedList) ((NamedList) response.get("schema")).get("fields");
+        NamedList<NamedList<Object>> fields = (NamedList) response.get("fields");
 
         fields.forEach((String fieldName, NamedList<Object> fieldInfo) -> {
 
@@ -446,20 +447,13 @@ public class SolrIndexDAOImpl implements IndexDAO {
                 if (indexField == null) {
 
                     String fieldType = fieldInfo.get("type").toString();
-                    String schema = fieldInfo.get("flags").toString();
+                    String schema = fieldInfo.get("schema").toString();
 
                     indexField = formatIndexField(fieldName, fieldType, schema, null, indexToJsonMap);
 
                     if (indexField != null) {
                         indexFieldMap.put(fieldName, indexField);
                     }
-                }
-
-                ArrayList copySources = (ArrayList) fieldInfo.get("copySources");
-
-                if (indexField != null && copySources != null && copySources.size() > 0) {
-
-                    indexField.setSourceFields(copySources);
                 }
             }
         });
@@ -487,16 +481,11 @@ public class SolrIndexDAOImpl implements IndexDAO {
         QueryResponse response = query(params);
 
         Map<String, IndexFieldDTO> indexFieldMap = new java.util.Hashtable<>();
-//        Set<IndexFieldDTO> indexFields =
-//                fields != null
-//                        ? new java.util.LinkedHashSet<IndexFieldDTO>()
-//                        : new java.util.TreeSet<IndexFieldDTO>();
 
         parseLukeResponse(response, indexFieldMap);
 
         params = new ModifiableSolrParams();
         params.set("qt", "/admin/luke");
-        params.set("show", "schema");
 
         response = query(params);
 
@@ -519,8 +508,8 @@ public class SolrIndexDAOImpl implements IndexDAO {
             indexFieldMap.remove(indexFieldToHide);
         }
 
-        // Insert entries for cl* and el* items
-        Map<String, String> layerNameMap = layersService.getLayerNameMap();
+        // Insert descriptions for entries for cl* and el* items, do not wait as spatial service may not be ready yet
+        Map<String, String> layerNameMap = layersService.getLayerNameMapNoWait();
         for (Map.Entry<String, String> item : layerNameMap.entrySet()) {
             IndexFieldDTO field = new IndexFieldDTO();
             field.setDocvalue(true);
@@ -534,7 +523,21 @@ public class SolrIndexDAOImpl implements IndexDAO {
             } else {
                 field.setDataType("float");
             }
-            indexFieldMap.put(item.getKey(), field);
+
+            // add the full field with description when it appears in the index
+            if (indexFieldMap.containsKey(item.getKey())) {
+                indexFieldMap.put(item.getKey(), field);
+            }
+        }
+
+        // add hasSensitiveVersion for each applicable indexFieldMap fields
+        for (Map.Entry<String, IndexFieldDTO> entry : indexFieldMap.entrySet()) {
+            String fieldName = entry.getKey();
+            String sensitiveField = SensitiveFields.get(fieldName);
+            if (sensitiveField != null) {
+                IndexFieldDTO indexFieldDTO = entry.getValue();
+                indexFieldDTO.setSensitiveField(sensitiveField);
+            }
         }
 
         if (fields != null && fields.length > 0) {
